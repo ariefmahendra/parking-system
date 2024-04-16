@@ -10,9 +10,9 @@ namespace ParkingSystem.Services
         int Leave(int lotId);
         List<Lot> GetStatus();
         int GetTotalSlotsByType(string type);
-        int GetFreeSlotsByPoliceNumber(string type);
-        List<int> GetFreeSlotsByColor(string color);
-        List<string> GetOddPoliceNumbers(string color);
-        List<string> GetEvenPoliceNumbers(string color);
+        int GetSlotByPoliceNumber(string policeNumber);
+        List<int> GetSlotByColour(string colour);
+        List<string> GetOddPoliceNumbers(string policeNumber);
+        List<string> GetEvenPoliceNumbers(string policeNumber);
     }
 }

@@ -56,30 +56,73 @@ namespace ParkingSystem.Services
 
         public List<Lot> GetStatus()
         {
-            throw new System.NotImplementedException();
+            return lots;
         }
 
         public int GetTotalSlotsByType(string type)
         {
-            throw new System.NotImplementedException();
+            var count = 0;
+            if (type == VehicleType.Mobil.ToString())
+            {
+                foreach (var lot in lots)
+                {
+                    if (lot.type.ToString() == type)
+                    {
+                        count++;
+                    }
+                }
+            } else if (type == VehicleType.Motor.ToString())
+            {
+                foreach (var lot in lots)
+                {
+                    if (lot.type.ToString() == type)
+                    {
+                        count++;
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid vehicle type");
+            }
+
+            return count;
         }
 
-        public int GetFreeSlotsByPoliceNumber(string type)
+        public int GetSlotByPoliceNumber(string policeNumber)
+        {
+            foreach (var lot in lots)
+            {
+                if (lot.policeNumber == policeNumber) 
+                {
+                    return lot.slot;
+                }
+            }
+            
+            throw new Exception("Not Found");
+        }
+
+        public List<int> GetSlotByColour(string colour)
+        {
+            var slotList = new List<int>();
+
+            foreach (var lot in lots)
+            {
+                if (lot.colour == colour)
+                {
+                    slotList.Add(lot.slot);
+                }
+            }
+
+            return slotList;
+        }
+
+        public List<string> GetOddPoliceNumbers(string policeNumber)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<int> GetFreeSlotsByColor(string color)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<string> GetOddPoliceNumbers(string color)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<string> GetEvenPoliceNumbers(string color)
+        public List<string> GetEvenPoliceNumbers(string policeNumber)
         {
             throw new System.NotImplementedException();
         }
