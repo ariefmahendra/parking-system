@@ -18,6 +18,7 @@ namespace ParkingSystem
 
             while (true)
             {
+                Console.Write("$ ");
                 var inputSplit = Console.ReadLine().Split(new []{' '}, StringSplitOptions.RemoveEmptyEntries);
 
                 var command = inputSplit[0].ToLower();
@@ -64,7 +65,7 @@ namespace ParkingSystem
                         break;
                     case "status":
                         var status = ParkingServices.GetStatus();
-                        Console.WriteLine("Slot     No.     Type     Registration No Colour");
+                        Console.WriteLine("Slot  No.  Type  Registration No Colour");
                         foreach (var lot in status)
                         {
                             Console.WriteLine($"{lot.slot} {lot.policeNumber} {lot.type} {lot.colour}");
@@ -94,13 +95,46 @@ namespace ParkingSystem
                             Console.WriteLine(e.Message);
                         }
                         break;
-                    case "registration_numbers_for_vehicles_with_colour":
+                    case "slot_numbers_for_vehicles_with_colour":
                         var colour = inputSplit[1];
                         var slotByColour = ParkingServices.GetSlotByColour(colour);
                         foreach (var slot in slotByColour)
                         {
                             Console.Write(slot + " ");
                         }
+                        Console.WriteLine();
+                        break;
+                    case "registration_numbers_for_vehicles_with_ood_plate":
+                        var oddPoliceNumbers = ParkingServices.GetOddPoliceNumbers();
+                        foreach (var oddPoliceNumber in oddPoliceNumbers)
+                        {
+                            Console.Write(oddPoliceNumber + " ");
+                        }
+                        Console.WriteLine();
+                        break;
+                    case "registration_numbers_for_vehicles_with_event_plate":
+                        var evenPoliceNumbers = ParkingServices.GetEvenPoliceNumbers();
+                        foreach (var evenPoliceNumber in evenPoliceNumbers)
+                        {
+                            Console.Write(evenPoliceNumber + " ");
+                        }
+                        Console.WriteLine();
+                        break;
+                    case "registration_numbers_for_vehicles_with_colour":
+                        var colour1 = inputSplit[1];
+                        var slotByColour1 = ParkingServices.GetPoliceNumberByColour(colour1);
+                        foreach (var slot in slotByColour1)
+                        {
+                            Console.Write(slot + " ");
+                        }
+
+                        Console.WriteLine();
+                        break;
+                    case "exit":
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command");
                         break;
                 }
             }

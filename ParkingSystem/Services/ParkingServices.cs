@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ParkingSystem.Data;
 
 namespace ParkingSystem.Services
@@ -8,6 +9,7 @@ namespace ParkingSystem.Services
     {
 
         private List<Lot> lots = new List<Lot>();
+        private List<int> removedLots = new List<int>();
         private int capacity;
         
         public int CreateParkingLot(int capacity)
@@ -17,14 +19,28 @@ namespace ParkingSystem.Services
 
         public int Park(string policeNumber, VehicleType vehicleType, string color)
         {
-            int lotId;
-            
+            var lotId = 0;
+
             if (lots.Count == 0)
             {
-                lotId = 1;
-            } else
+                if (removedLots.Count != 0)
+                {
+                    lotId = removedLots.First();
+                    removedLots.Remove(lotId);
+                }
+                else
+                {
+                    lotId = 1;
+                }
+            }
+            else if (removedLots.Count != 0)
             {
-                lotId = lots.Count + 1;
+                lotId = removedLots.First();
+                removedLots.Remove(lotId);
+            }
+            else
+            {
+                lotId = lots.Max(lot => lot.slot) + 1;
             }
 
             if (lotId > capacity)
@@ -41,21 +57,19 @@ namespace ParkingSystem.Services
 
         public int Leave(int lotId)
         {
-            foreach (var lot in lots)
+            foreach (var lot in lots.Where(lot => lot.slot == lotId))
             {
-                if (lot.slot == lotId)
-                {
-                    lots.Remove(lot);
-                    return lotId;
-                }
-
+                lots.Remove(lot);
+                removedLots.Add(lotId);
+                return lotId;
             }
-            
+
             throw new Exception("Slot not found");
         }
 
         public List<Lot> GetStatus()
         {
+            lots.Sort((x, y) => x.slot.CompareTo(y.slot));
             return lots;
         }
 
@@ -64,22 +78,10 @@ namespace ParkingSystem.Services
             var count = 0;
             if (type == VehicleType.Mobil.ToString())
             {
-                foreach (var lot in lots)
-                {
-                    if (lot.type.ToString() == type)
-                    {
-                        count++;
-                    }
-                }
+                count += lots.Count(lot => lot.type.ToString() == type);
             } else if (type == VehicleType.Motor.ToString())
             {
-                foreach (var lot in lots)
-                {
-                    if (lot.type.ToString() == type)
-                    {
-                        count++;
-                    }
-                }
+                count += lots.Count(lot => lot.type.ToString() == type);
             }
             else
             {
@@ -91,40 +93,32 @@ namespace ParkingSystem.Services
 
         public int GetSlotByPoliceNumber(string policeNumber)
         {
-            foreach (var lot in lots)
+            foreach (var lot in lots.Where(lot => lot.policeNumber == policeNumber))
             {
-                if (lot.policeNumber == policeNumber) 
-                {
-                    return lot.slot;
-                }
+                return lot.slot;
             }
-            
+
             throw new Exception("Not Found");
         }
 
         public List<int> GetSlotByColour(string colour)
         {
-            var slotList = new List<int>();
-
-            foreach (var lot in lots)
-            {
-                if (lot.colour == colour)
-                {
-                    slotList.Add(lot.slot);
-                }
-            }
-
-            return slotList;
+            return (from lot in lots where lot.colour == colour select lot.slot).ToList();
         }
 
-        public List<string> GetOddPoliceNumbers(string policeNumber)
+        public List<string> GetOddPoliceNumbers()
         {
-            throw new System.NotImplementedException();
+            return (from lot in lots let no = lot.policeNumber.Split('-') where int.Parse(no[1]) % 2 != 0 select lot.policeNumber).ToList();
         }
 
-        public List<string> GetEvenPoliceNumbers(string policeNumber)
+        public List<string> GetEvenPoliceNumbers()
         {
-            throw new System.NotImplementedException();
+            return (from lot in lots let no = lot.policeNumber.Split('-') where int.Parse(no[1]) % 2 == 0 select lot.policeNumber).ToList();
+        }
+
+        public List<string> GetPoliceNumberByColour(string colour)
+        {
+            return (from lot in lots where lot.colour == colour select lot.policeNumber).ToList();
         }
     }
 }

@@ -12,7 +12,8 @@ namespace ParkingSystem.Services
         int GetTotalSlotsByType(string type);
         int GetSlotByPoliceNumber(string policeNumber);
         List<int> GetSlotByColour(string colour);
-        List<string> GetOddPoliceNumbers(string policeNumber);
-        List<string> GetEvenPoliceNumbers(string policeNumber);
+        List<string> GetOddPoliceNumbers();
+        List<string> GetEvenPoliceNumbers();
+        List<string> GetPoliceNumberByColour(string colour);
     }
 }
